@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
@@ -46,7 +47,7 @@ public class CustomerRepoTest {
 	}
 
 	@Test
-	public void testFindAllCustomers(@Autowired CustomerRepo repo) {
+	public void testFindAllCustomers(@Autowired @Qualifier("repo1") CustomerRepo repo) {
 		this.entityManager.persist(bojack);
 		this.entityManager.persist(todd);
 		this.entityManager.persist(princess);
@@ -69,9 +70,7 @@ public class CustomerRepoTest {
 			assertAll(() -> assertEquals("Princess", repoCustomer.getFirstName()),
 					() -> assertEquals("Caroline", repoCustomer.getLastName()),
 					() -> assertEquals("Cat", repoCustomer.getMiddleName()),
-					() -> assertTrue(repoCustomer.getId() > 0L), 
-					() -> assertNull(repoCustomer.getSuffix())
-					);
+					() -> assertTrue(repoCustomer.getId() > 0L), () -> assertNull(repoCustomer.getSuffix()));
 			count++;
 		}
 		assertEquals(1, count);
