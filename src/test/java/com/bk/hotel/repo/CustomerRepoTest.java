@@ -1,60 +1,59 @@
 package com.bk.hotel.repo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.bk.hotel.model.Customer;
 
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 @DataJpaTest
+@DirtiesContext
+@Disabled
 public class CustomerRepoTest {
-	@Autowired
 	private TestEntityManager entityManager;
 
-	@Autowired
 	private CustomerRepo repo;
 	private Customer bojack;
 	private Customer todd;
 	private Customer princess;
 
-	public CustomerRepoTest() {
+	public CustomerRepoTest(@Autowired TestEntityManager entityManager, @Autowired CustomerRepo repo) {
 		bojack = new Customer.CustomerBuilder().firstName("BoJack").middleName("Horse").lastName("Horseman")
 				.suffix("Sr.").build();
 		todd = new Customer.CustomerBuilder().firstName("Todd").middleName("Toddifer").lastName("Chavez").suffix("Jr.")
 				.build();
 		princess = new Customer.CustomerBuilder().firstName("Princess").middleName("Cat").lastName("Caroline").build();
+		this.repo = repo;
+		this.entityManager = entityManager;
 	}
 
-	@After
+	@AfterEach
 	public void cleanup() {
 		this.entityManager.clear();
 	}
 
 	@Test
-	public void testFindAllCustomers() {
+	public void testFindAllCustomers(@Autowired CustomerRepo repo) {
 		this.entityManager.persist(bojack);
+		this.entityManager.persist(todd);
+		this.entityManager.persist(princess);
 		Iterable<Customer> customers = repo.findAll();
 
-		int count = 0;
-		for (Customer repoCustomer : customers) {
-			assertEquals("BoJack", repoCustomer.getFirstName());
-			assertEquals("Horseman", repoCustomer.getLastName());
-			assertEquals("Horse", repoCustomer.getMiddleName());
-			assertEquals("Sr.", repoCustomer.getSuffix());
-			assertTrue(repoCustomer.getId() > 0L);
-			assertNull(repoCustomer.getDateOfLastStay());
-			count++;
-		}
-		assertEquals(1, count);
+		assertThat(customers).extracting("firstName", "lastName").contains(tuple("BoJack", "Horseman"),
+				tuple("Princess", "Carolyn"), tuple("Todd", "Chavez"));
 	}
 
 	@Test
@@ -66,12 +65,13 @@ public class CustomerRepoTest {
 
 		int count = 0;
 		for (Customer repoCustomer : customers) {
-			assertEquals("Princess", repoCustomer.getFirstName());
-			assertEquals("Caroline", repoCustomer.getLastName());
-			assertEquals("Cat", repoCustomer.getMiddleName());
-			assertTrue(repoCustomer.getId() > 0L);
-			assertNull(repoCustomer.getDateOfLastStay());
-			assertNull(repoCustomer.getSuffix());
+
+			assertAll(() -> assertEquals("Princess", repoCustomer.getFirstName()),
+					() -> assertEquals("Caroline", repoCustomer.getLastName()),
+					() -> assertEquals("Cat", repoCustomer.getMiddleName()),
+					() -> assertTrue(repoCustomer.getId() > 0L), 
+					() -> assertNull(repoCustomer.getSuffix())
+					);
 			count++;
 		}
 		assertEquals(1, count);

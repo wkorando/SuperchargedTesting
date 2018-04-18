@@ -1,10 +1,19 @@
-# WelcomeToJunit5
+# Supercharged Testing
 
-Sample application demonstrating new functionality available in JUnit 5. 
+Sample application demonstrating how to write effective tests using AssertJ, JUnit 5, and Mockito. 
 
-For addtional information check out these blog articles:
-Conditionally Disabling and Filtering Tests: https://keyholesoftware.com/2018/02/12/disabling-filtering-tests-junit-5/
-Using Test Interfaces: https://keyholesoftware.com/2018/02/06/encouraging-good-behavior-with-junit-5-test-interfaces/
+For additional information on tools and techniques used in this demo checkout this blog series:
+https://keyholesoftware.com/company/creations/tech-resources/effective-automated-testing-with-spring/
+And my Pluralsight video on Effective Automated Testing with Spring:
+https://www.pluralsight.com/courses/effective-testing-with-spring
 
-And the JUnit 5 User Guides: 
-https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests-argument-conversion
+User Docs:
+
+AssertJ:
+http://joel-costigliola.github.io/assertj/assertj-core-features-highlight.html
+
+Mockito:
+https://static.javadoc.io/org.mockito/mockito-core/2.18.0/org/mockito/Mockito.html
+
+JUnit 5: 
+https://junit.org/junit5/docs/current/user-guide/
